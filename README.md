@@ -89,11 +89,10 @@ apkcal（apk中方法数统计工具）
 	apkcal type=class deep=1 tiebaAll/tiebaAll.apk "com.baidu.tieba.account"
 ```
 
-#### 6）、不输入包名的情况下，则会对整个apk中所有的package进行深度遍历
+#### 6）、不输入包名的情况下，则是对整个apk中所有的package都统计（总量）
 ```bash
 	apkcal type=class deep=1 tiebaAll/tiebaAll.apk
 ```
-注意！！！：机器性能不好，请别轻易这样玩儿，尤其是apk中package数量特别多的情况。
 
 ### 5、意见反馈
 	Author：zhaoxianlie

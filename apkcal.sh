@@ -62,6 +62,7 @@ mkdir apk_temp
 cp $apk_path apk_temp/
 cd apk_temp
 # package list dir path
+classes_dex_path="`pwd`/classes.dex"
 classes_dir_path="`pwd`/classes_dir"
 
 echo "创建临时目录成功..."
@@ -81,6 +82,32 @@ echo "解压apk文件并提取dex文件成功..."
 # 1、使用baksmali将classes.dex中的class导出（smali文件）
 java -jar $baksmali_jarfile -o $classes_dir_path classes.dex
 echo -e "反编译dex文件成功...\n"
+
+
+# 直接统计apk中的数据：classes.dex
+# 使用方法： cal_apk classes.dex method
+function cal_apk() {
+    local cal_type dex;
+    dex=$1;
+    cal_type=$2;
+
+    # 对type进行修正
+    if [ "$cal_type" == "class" ];then
+        cal_type="class_defs_size"
+    else
+        cal_type=$cal_type"_ids_size"
+    fi
+
+    # 从dex文件中统计
+    the_num=`dexdump -f $dex | grep $cal_type`
+    # 为了得到纯数字部分，咱们吧不相干的东西删掉
+    the_num=${the_num//$cal_type/}
+    the_num=${the_num//:/}
+    the_num=`echo $the_num | sed -e 's/\(^ *\)//' -e 's/\( *$\)//'`
+    echo -e "  all \t: $the_num"
+    # 删除临时文件
+    rm -rf $dex
+}
 
 # 按照package维度进行统计
 # 用smali对各个package进行转换：smali to dex
@@ -167,7 +194,7 @@ function scan_package() {
 
 # 没有输入package list的情况下，就深度遍历apk中的所有包
 if [ "$pkg_list" == "" ] ;then
-    scan_package $classes_dir_path
+    cal_apk $classes_dex_path "$the_type"
 else
     # 如果是指定了package list，则判断是否需要进行深度遍历
     if [ $deep_scan == 1 ];then
@@ -180,13 +207,13 @@ else
             scan_package $classes_dir_path/$target_pkg_path $classes_dir_path/
         done
     fi
-fi
 
-# 进入package list目录，按照package维度进行统计
-cd $classes_dir_path
-for pkg_item in $pkg_list ;do
-    cal_package $pkg_item "$the_type"
-done
+    # 进入package list目录，按照package维度进行统计
+    cd $classes_dir_path
+    for pkg_item in $pkg_list ;do
+        cal_package $pkg_item "$the_type"
+    done
+fi
 
 # 删除临时目录，结束
 cd ../../ && rm -rf apk_temp
