@@ -17,13 +17,13 @@ apkcal（apk中方法数统计工具）
 #### 1）、配置ADT的platform-tools和tools环境变量
 
 #### 2）、下载工具，解压后放到一个目录，并保证脚本可执行，比如：
-```shell
+```bash
 	cp -r apkcal ~/Document/Tool/apkcal
 	chmod -R 0755 ~/Document/Tool/apkcal/
 ```	
 
 #### 3）、为apkcal.sh建立软链接：
-```shell
+```bash
 	cd /usr/local/bin
 	ln -s ~/Document/Tool/apkcal/apkcal.sh apkcal
 ```	
@@ -33,10 +33,11 @@ apkcal（apk中方法数统计工具）
 
 ### 4、如何使用？
 #### 1）、查看帮助
-```shell
+```bash
 	apkcal -h
 ```
 以上命令将输出：
+
 	用法：
 	apkcal type=[type] deep=[deep] your_apk_path "your_package_list"
 
@@ -47,10 +48,11 @@ apkcal（apk中方法数统计工具）
 	apkcal type=method ../tieba.apk "com.baidu.tieba.frs com.baidu.tieba.pb"
 
 #### 2）、统计tiebaAll.apk文件中"com.baidu.tieba.account"包下的方法数
-```shell
+```bash
 	apkcal type=method tiebaAll/tiebaAll.apk "com.baidu.tieba.account"
 ```
 以上命令将输出：
+
 	开始进行apk文件中【 method 数】的统计...
 	创建临时目录成功...
 	解压apk文件并提取dex文件成功...
@@ -61,10 +63,11 @@ apkcal（apk中方法数统计工具）
 	删除临时目录成功，统计完成！
 
 #### 3）、深度统计tiebaAll.apk文件中"com.baidu.tieba.account"包下的方法数
-```shell
+```bash
 	apkcal type=method deep=1 tiebaAll/tiebaAll.apk "com.baidu.tieba.account"
 ```
 以上命令将输出：
+
 	开始进行apk文件中【 method 数】的统计...
 	创建临时目录成功...
 	解压apk文件并提取dex文件成功...
@@ -77,17 +80,17 @@ apkcal（apk中方法数统计工具）
 	删除临时目录成功，统计完成！
 
 #### 4）、同时统计多个包，包名之间用空格分开即可
-```shell
+```bash
 	apkcal type=method tiebaAll/tiebaAll.apk "com.baidu.tieba.account com.baidu.tieba.frs com.baidu.tieba.pb"
 ```
 
 #### 5）、统计class的数量
-```shell
+```bash
 	apkcal type=class deep=1 tiebaAll/tiebaAll.apk "com.baidu.tieba.account"
 ```
 
 #### 6）、不输入包名的情况下，则会对整个apk中所有的package进行深度遍历
-```shell
+```bash
 	apkcal type=class deep=1 tiebaAll/tiebaAll.apk
 ```
 注意！！！：机器性能不好，请别轻易这样玩儿，尤其是apk中package数量特别多的情况。
