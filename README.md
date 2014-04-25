@@ -1,13 +1,14 @@
-apkcal（apk中方法数统计工具）
+apkcal（apk/jar中方法数统计工具）
 ===================================
 
 ### 1、工具用途？
-	对Android APK包中的如下类型进行统计：
+	对Android APK、Jar包中的如下类型进行统计：
 	1）、class：类数
 	2）、field：字段数
 	3）、method：方法数
 	4）、string：字符串数
 
+能对单个package进行统计，也能对package进行深度递归（包括所有子package）统计，也能对apk或jar文件进行总量统计	
 
 ### 2、统计的目的？
 	因为在Android Dex File Format中，这些东西都有一个65536大小的限制；即：单个dex文件中，方法数量（等）不能超过这个数值。
@@ -94,6 +95,20 @@ apkcal（apk中方法数统计工具）
 	apkcal type=class tiebaAll/tiebaAll.apk
 ```
 这种情况下，deep=1无效，即：不会进行所有package的深度遍历（因为package数量太多，实在太卡）
+
+#### 7）、jar文件的统计和apk完全一样，如：
+```bash
+	apkcal type=class galaxy-lite-1.0.0.jar
+```
+输出：
+
+	开始进行此文件中【 class 数】的统计...
+	创建临时目录成功...
+	反编译dex文件成功...
+
+	  all 	: 17
+
+	删除临时目录成功，统计完成！
 
 ### 5、意见反馈
 	Author：zhaoxianlie

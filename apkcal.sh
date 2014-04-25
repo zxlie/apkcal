@@ -20,12 +20,15 @@ fi
 
 # 检验参数的合法性，必须指定apk的路径
 if [ x"$apk_path" == x ] || [ ! -f "$apk_path" ] || [ x"$the_type" == x ] || [ "$1" == "-h" ] ;then
+    echo -e "\n\t=================================================="
     echo -e "\n\t用法："
     echo -e "\tapkcal type=[type] deep=[deep] your_apk_path \"your_package_list\"\n"
     echo -e "\t  type：统计类型，可选：[class|field|method|string]"
     echo -e "\t  deep：是否进行package深度扫描统计，可选：[0|1] 默认：0"
     echo -e "\n\t例："
-    echo -e "\tapkcal type=method ../tieba.apk \"com.baidu.tieba.frs com.baidu.tieba.pb\"\n"
+    echo -e "\tapkcal type=method ../tieba.apk \"com.baidu.tieba.frs com.baidu.tieba.pb\""
+    echo -e "\n\tgithub地址：https://github.com/zxlie/apkcal\n"
+    echo -e "\t==================================================\n"
     exit 1;
 fi
 
@@ -33,7 +36,7 @@ fi
 the_type=${the_type//type=/}
 
 # 打印调试信息
-echo "开始进行apk文件中【 "$the_type" 数】的统计..."
+echo "开始进行此文件中【 "$the_type" 数】的统计..."
 
 # 得到工具的原始目录
 prog=$tool_name
@@ -67,22 +70,37 @@ classes_dir_path="`pwd`/classes_dir"
 
 echo "创建临时目录成功..."
 
-# 获得apk的名称
-apk_name="$(basename *.apk)"
+# 判断是否为apk或者jar文件
+apk_flag=`echo $apk_path | grep "\.apk$"`
+jar_flag=`echo $apk_path | grep "\.jar$"`
 
-# 重命名为zip
-mv $apk_name $apk.zip
+# 是apk文件
+if [ "$apk_flag" != "" ];then
+    # 获得apk的名称
+    apk_name="$(basename *.apk)"
 
-# 解压apk，得到classes.dex包
-unzip -x $APK_NAME.zip > /dev/null
-echo "解压apk文件并提取dex文件成功..."
+    # 重命名为zip
+    mv $apk_name $apk.zip
+
+    # 解压apk，得到classes.dex包
+    unzip -x $APK_NAME.zip > /dev/null
+    echo "解压apk文件并提取dex文件成功..."
+
+# 是jar文件
+elif [ "$jar_flag" != "" ];then
+    # 将jar包转换为classes.dex
+    dx --dex --verbose --no-strict --output=classes.dex $apk_path > /dev/null
+
+# 不合法的文件
+else
+    echo "此工具只支持apk和jar文件，请检查您的输入"
+    exit;
+fi
 
 # 在当前目录下，就可以得到classes.dex文件了
-# 接下来要做的事情就是：
-# 1、使用baksmali将classes.dex中的class导出（smali文件）
+# 接下来使用baksmali将classes.dex中的class导出（smali文件）
 java -jar $baksmali_jarfile -o $classes_dir_path classes.dex
 echo -e "反编译dex文件成功...\n"
-
 
 # 直接统计apk中的数据：classes.dex
 # 使用方法： cal_apk classes.dex method
