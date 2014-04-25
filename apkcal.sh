@@ -64,6 +64,7 @@ rm -rf apk_temp
 mkdir apk_temp
 cp $apk_path apk_temp/
 cd apk_temp
+
 # package list dir path
 classes_dex_path="`pwd`/classes.dex"
 classes_dir_path="`pwd`/classes_dir"
@@ -94,6 +95,7 @@ elif [ "$jar_flag" != "" ];then
 # 不合法的文件
 else
     echo "此工具只支持apk和jar文件，请检查您的输入"
+    cd ../ && rm -rf apk_temp
     exit;
 fi
 
